@@ -60,7 +60,7 @@ var ExperimentsDetailsCommandsViewItems = function(cursor) {
 	} else {
 		searchString = searchString.replace(".", "\\.");
 		var regEx = new RegExp(searchString, "i");
-		var searchFields = ["commandId", "requestId", "commandName", "command_parameters", "status", "modifiedAt", "statusMessage"];
+		var searchFields = ["commandId", "requestId", "commandName", "deviceName", "command_parameters", "status", "modifiedAt", "statusMessage"];
 		filtered = _.filter(raw, function(item) {
 			var match = false;
 			_.each(searchFields, function(field) {
@@ -90,7 +90,7 @@ var ExperimentsDetailsCommandsViewItems = function(cursor) {
 
 var ExperimentsDetailsCommandsViewExport = function(cursor, fileType) {
 	var data = ExperimentsDetailsCommandsViewItems(cursor);
-	var exportFields = ["commandId", "requestId", "commandName", "command_parameters", "status", "modifiedAt", "statusMessage"];
+	var exportFields = ["commandId", "requestId", "commandName", "deviceName", "command_parameters", "status", "modifiedAt", "statusMessage"];
 
 	var str = convertArrayOfObjects(data, exportFields, fileType);
 
@@ -152,7 +152,7 @@ var ExperimentsDetailsCommandsRun = function(cursor, experimentId) {
 	//TODO: add lock functionality
 
 	var exp = Experiments.findOne({_id : experimentId});
-	var dev = Devices.findOne({_id : exp.deviceId});
+	//var dev = Devices.findOne({_id : exp.deviceId});
 
 	var firstCommandFlag = true;
 	var previousCommandId; 
@@ -181,6 +181,8 @@ var ExperimentsDetailsCommandsRun = function(cursor, experimentId) {
 			params += ',"lockId":"123"'; //TODO: check lockId if device has been locked, and add to every device.
 		}
 		
+        var dev = Devices.findOne({ _id : c.deviceId });
+
 		var argsString = '{' + params + '}'; // TODO: add dynamic parameters for all the commands
 		
 		var args = JSON.parse(argsString);
@@ -566,6 +568,7 @@ Template.ExperimentsDetailsCommandsViewTableItems.events({
 	},
 	"click #edit-button": function(e, t) {
 		e.preventDefault();
+        
 		Router.go("experiments.details.edit", {experimentId: UI._parentData(1).params.experimentId, commandId: this._id});
 		return false;
 	}

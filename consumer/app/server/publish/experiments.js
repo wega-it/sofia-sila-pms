@@ -32,7 +32,7 @@ Meteor.publish("experiments", function() {
 });
 
 Meteor.publish("experiment_list", function() {
-	return Experiments.find({$or: [{ private: {$ne: true} },{ ownerId: this.userId }]}, {transform:function(doc) { var device = Devices.findOne({_id: doc.deviceId }); if(device) doc.deviceName = device.name; return doc; },sort:{experimentNumber:-1}});
+    return Experiments.find({ $or: [{ private: { $ne: true } }, { ownerId: this.userId }] }, {});
 });
 
 Meteor.publish("experiments_empty", function() {
@@ -40,7 +40,7 @@ Meteor.publish("experiments_empty", function() {
 });
 
 Meteor.publish("experiment_details", function(experimentId) {
-	return Experiments.find({_id:experimentId,$or: [{ private: {$ne: true} },{ ownerId: this.userId }]}, {transform:function(doc) { var device = Devices.findOne({_id: doc.deviceId }); if(device) doc.deviceName = device.name; return doc; }});
+	return Experiments.find({_id:experimentId,$or: [{ private: {$ne: true} },{ ownerId: this.userId }]}, {});
 });
 
 Meteor.publish("experiment", function(experimentId) {

@@ -44,5 +44,5 @@ Meteor.publish("device", function(deviceId) {
 });
 
 Meteor.publish("devices", function() {
-	return Devices.find({$or: [{ private: {$ne: true} },{ ownerId: this.userId }]}, {});
+	return Devices.find({$or: [{ private: {$ne: true} },{ ownerId: this.userId }]}, { sort: { _id: 1 } });
 });

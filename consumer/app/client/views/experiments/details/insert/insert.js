@@ -46,6 +46,7 @@ Template.ExperimentsDetailsInsertInsertForm.rendered = function() {
 
 	pageSession.set("experimentsDetailsInsertInsertFormInfoMessage", "");
 	pageSession.set("experimentsDetailsInsertInsertFormErrorMessage", "");
+    pageSession.set("selectedDeviceId", "0000000000");
 
 	$(".input-group.date").each(function() {
 		var format = $(this).find("input[type='text']").attr("data-format");
@@ -102,7 +103,6 @@ Template.ExperimentsDetailsInsertInsertForm.events({
 			},
 			function(values) {
 				values.experimentId = self.params.experimentId;
-
 				newId = ExperimentCommands.insert(values, function(e) { if(e) errorAction(e.message); else submitAction(); });
 			}
 		);
@@ -111,9 +111,6 @@ Template.ExperimentsDetailsInsertInsertForm.events({
 	},
 	"click #form-cancel-button": function(e, t) {
 		e.preventDefault();
-
-		
-
 		Router.go("experiments.details", {experimentId: this.params.experimentId});
 	},
 	"click #form-close-button": function(e, t) {
@@ -125,9 +122,13 @@ Template.ExperimentsDetailsInsertInsertForm.events({
 		e.preventDefault();
 
 		/*BACK_REDIRECT*/
+    },
+    "change #selectDevId": function (e, t) {
+        e.preventDefault();
+        
+        pageSession.set("selectedDeviceId", $(e.target).val());
 	}
 
-	
 });
 
 Template.ExperimentsDetailsInsertInsertForm.helpers({
@@ -136,6 +137,14 @@ Template.ExperimentsDetailsInsertInsertForm.helpers({
 	},
 	"errorMessage": function() {
 		return pageSession.get("experimentsDetailsInsertInsertFormErrorMessage");
+    },
+    "device_command_set": function () {
+
+        var device = Devices.findOne({ _id: pageSession.get("selectedDeviceId") });
+        var qry = '{"' + device.silaDeviceClassId + '": { "$in": [ "M", "R", "O" ] } }';
+        var qryJSON = JSON.parse(qry);
+        
+        return CommonCommandSet.find(qryJSON, { sort: { createdAt: 1 } });
 	}
 	
 });

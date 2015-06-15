@@ -64,13 +64,23 @@ this.ExperimentsDetailsCommandsController = RouteController.extend({
 
 	data: function() {
 		
+        function transformFunc(doc) {
+
+            var command = CommonCommandSet.findOne({ _id: doc.commandId });
+            var device = Devices.findOne({ _id: doc.deviceId });
+
+            if (command) doc.commandName = command.name;
+            if (device) doc.deviceName = device.name;
+
+            return doc;
+        }
 
 		return {
 			params: this.params || {},
 			devices: Devices.find({}, {}),
-			experiment_details: Experiments.findOne({_id:this.params.experimentId}, {transform:function(doc) { var device = Devices.findOne({_id: doc.deviceId }); if(device) doc.deviceName = device.name; return doc; }}),
+			experiment_details: Experiments.findOne({_id:this.params.experimentId},{}),
 			common_command_set: CommonCommandSet.find({}, {}),
-			experiment_commands: ExperimentCommands.find({experimentId:this.params.experimentId}, {transform:function(doc) { var command = CommonCommandSet.findOne({_id: doc.commandId }); if(command) doc.commandName = command.name; return doc; },sort:{createdAt:1}})
+			experiment_commands: ExperimentCommands.find({experimentId:this.params.experimentId}, {transform:transformFunc, sort:{createdAt:1}})
 		};
 		/*DATA_FUNCTION*/
 	},

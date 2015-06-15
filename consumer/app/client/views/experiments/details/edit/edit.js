@@ -47,6 +47,10 @@ Template.ExperimentsDetailsEditEditForm.rendered = function() {
 	pageSession.set("experimentsDetailsEditEditFormInfoMessage", "");
 	pageSession.set("experimentsDetailsEditEditFormErrorMessage", "");
 
+
+    var devId = this.data.experiment_command.deviceId;
+    pageSession.set("selectedDeviceId", this.data.experiment_command.deviceId);
+
 	$(".input-group.date").each(function() {
 		var format = $(this).find("input[type='text']").attr("data-format");
 
@@ -102,7 +106,6 @@ Template.ExperimentsDetailsEditEditForm.events({
 			},
 			function(values) {
 				
-
 				ExperimentCommands.update({ _id: t.data.experiment_command._id }, { $set: values }, function(e) { if(e) errorAction(e.message); else submitAction(); });
 			}
 		);
@@ -111,9 +114,6 @@ Template.ExperimentsDetailsEditEditForm.events({
 	},
 	"click #form-cancel-button": function(e, t) {
 		e.preventDefault();
-
-		
-
 		Router.go("experiments.details", {experimentId: this.params.experimentId});
 	},
 	"click #form-close-button": function(e, t) {
@@ -125,9 +125,12 @@ Template.ExperimentsDetailsEditEditForm.events({
 		e.preventDefault();
 
 		/*BACK_REDIRECT*/
+	},
+    "change #selectDevId": function (e, t) {
+        e.preventDefault();
+        pageSession.set("selectedDeviceId", $(e.target).val());
 	}
 
-	
 });
 
 Template.ExperimentsDetailsEditEditForm.helpers({
@@ -136,6 +139,13 @@ Template.ExperimentsDetailsEditEditForm.helpers({
 	},
 	"errorMessage": function() {
 		return pageSession.get("experimentsDetailsEditEditFormErrorMessage");
+    },
+    "device_command_set": function () {
+        
+        var device = Devices.findOne({ _id: pageSession.get("selectedDeviceId") });
+        var qry = '{"' + device.silaDeviceClassId + '": { "$in": [ "M", "R", "O" ] } }';
+        var qryJSON = JSON.parse(qry);
+
+        return CommonCommandSet.find(qryJSON, { sort: { createdAt: 1 } });
 	}
-	
 });

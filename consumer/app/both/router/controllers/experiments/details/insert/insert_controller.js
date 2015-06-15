@@ -64,16 +64,11 @@ this.ExperimentsDetailsInsertController = RouteController.extend({
 
 	data: function() {
 		
-		var experiment = Experiments.findOne({_id:this.params.experimentId},{}); 
-		var device = Devices.findOne({_id: experiment.deviceId});  
-		var qry = '{"' + device.silaDeviceClassId + '": { "$in": [ "M", "R", "O" ] } }';
-		var qryJSON = JSON.parse(qry);
-
 		return {
 			params: this.params || {},
 			devices: Devices.find({}, {}),
-			experiment_details: Experiments.findOne({_id:this.params.experimentId}, {transform:function(doc) { var device = Devices.findOne({_id: doc.deviceId }); if(device) doc.deviceName = device.name; return doc; }}),
-			common_command_set: CommonCommandSet.find(qryJSON, {sort: {createdAt:1}}),
+			experiment_details: Experiments.findOne({_id:this.params.experimentId}, {}),
+            common_command_set: CommonCommandSet.find({}, { sort: { createdAt: 1 } }),
 			experiment_commands_empty: ExperimentCommands.findOne({_id:null}, {})
 		};
 		/*DATA_FUNCTION*/

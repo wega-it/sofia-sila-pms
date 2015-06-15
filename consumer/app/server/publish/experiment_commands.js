@@ -29,8 +29,20 @@
 //TODO: check for ownerId for every command if the experiment is shared or private
 
 Meteor.publish("experiment_commands", function(experimentId) {
+    
+    function transformFunc(doc) {
+        
+        var command = CommonCommandSet.findOne({ _id: doc.commandId });
+        var device = Devices.findOne({ _id: doc.deviceId });
+
+        if (command) doc.commandName = command.name;
+        if (device) doc.deviceName = device.name;
+
+        return doc;
+    }
+
 	//return ExperimentCommands.find({experimentId:experimentId,ownerId:this.userId}, {transform:function(doc) { var command = CommonCommandSet.findOne({_id: doc.commandId }); if(command) doc.commandName = command.name; return doc; },sort:{createdAt:1}});
-	return ExperimentCommands.find({experimentId:experimentId}, {transform:function(doc) { var command = CommonCommandSet.findOne({_id: doc.commandId }); if(command) doc.commandName = command.name; return doc; },sort:{createdAt:1}});
+	return ExperimentCommands.find({experimentId:experimentId}, {transform:transformFunc ,sort:{createdAt:1}});
 });
 
 Meteor.publish("experiment_commands_empty", function() {
