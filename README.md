@@ -50,4 +50,4 @@ SOFIA will run now at <a href="http://192.168.0.1/">http://192.168.0.1:80/</a> i
 - Instructions to install SOFIA in Windows
 
 
-Copyright (c) 2015 <a href="http://www.wega-it.com/">wega Informatik AG</a> | <a href="mailto:erick.bastidas@wega-it.com">Erick Bastidas</a>
+Copyright (c) 2015 <a href="mailto:ebastidas3@gmail.com">Erick Bastidas</a>  |  <a href="http://www.wega-it.com/">wega Informatik AG</a>
